@@ -1,12 +1,14 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import AbstractUser
 
 #acc
 
-class acc_register(models.Model):
-    acc_id = models.AutoField(db_column="User ID", primary_key=True)
-    phone = models.CharField(db_column="Phone", max_length=50)
-    password = models.CharField(db_column="Password", max_length=50)
+class User(AbstractUser):
+    phone_number = models.CharField(max_length=12, unique=True)
+    is_phone_verified = models.BooleanField(default=False)
+    otp =models.CharField(max_length=6)
+    
 
-    def __str__(self):
-        return self.phone
+    
+
