@@ -72,7 +72,7 @@
           background-color: var(--color-gray-dark);
           color: var(--color-white);
           font-size: 1.5rem;
-          width: 7rem;
+          width: 10rem;
           padding: 0.3rem;
   
       }
@@ -83,7 +83,11 @@
          margin-top: 1rem;
          margin-bottom: 1.5rem;
        }
-  
+       
+    .otp{
+        cursor: pointer;
+        color:#009ADA;
+    }
      
   </style>
 
@@ -95,28 +99,45 @@
     <form action="" method="POST">
         {% csrf_token %}
         <div>
-            <label for="">Phone:</label>
-            <input type="text" name="phone">
+            <label for="">Phone</label>
+            <input type="text" name="phone" id="phone-no" placeholder="09........." required>
         </div>
         
         <div>
-            <label for="">Password:</label>
-            <input type="password" name="password">
+            <label for="" onclick="getopt()" class="otp">Get Otp Code:</label>
+            <input type="text" name="otp">
         </div>
         
-        <input type="submit" class="btn" value="Login">
+        <input type="submit" class="btn" value="Next Step">
     
     </form>
 
     {% for message in messages %}
       <p>{{message}}</p>
     {% endfor %}
-
-    <p>Don't have an account? <a href="{% url 'base:registeration' %}">Sign Up</a></p>
-    <p><a href="{% url 'base:forgotpwd' %}">Forgot Password</a></p>
     
 </div>
 
+<script>
+    async function getopt(){
+        var phone = document.querySelector("#phone-no").value;
+        fetch('http://localhost:8000/getotp', {
+            method: 'POST',
+            body: JSON.stringify({
+                phone:phone,
+
+            }),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            }
+            })
+            .then(function(response){ 
+            return response.json()}).then(function(data){ console.log(data)})
+                    
+    }
+    
+
+</script>
 
 
 {% endblock %}

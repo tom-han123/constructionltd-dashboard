@@ -12,6 +12,9 @@ from django.contrib.auth.models import User
 from .decorators import unauthenticated_user
 from .models import User
 from .forms import CreateregisterForm
+from django.views.decorators.csrf import csrf_exempt
+import json
+from .sms import send_otp_to_phone
 
 def dashboard(request):
     return render(request, 'base/index.html')
@@ -45,11 +48,34 @@ def loginpage(request):
             else:
                 messages.info(request,'Email or Password is incorrect! ')
     context={}
-    return render(request,'base/login.html') 
+    return render(request,'base/login.html')
+
+def forgot(request):
+    if request.method == 'POST':
+        phone=request.POST.get('phone')
+        otp=request.POST.get('otp')
+        return redirect('base:resetpwd')
+    context = {}
+    return render(request, 'base/forgotpwd.html')
+
+@csrf_exempt
+def getotp(request):
+    body = request.body.decode('utf-8')
+    data = json.loads(body)
+    otp = send_otp_to_phone(data['phone'])
+    if(otp):
+        return JsonResponse({'otp':otp})
+    return 'None'
+
+def resetpwd(request):
+    context = {}
+    return render(request, 'base/resetpwd.html')
                      
 def logoutpage(request):
     logout(request)
     return redirect('base:login')
+
+
 
 
 

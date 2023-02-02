@@ -95,25 +95,22 @@
     <form action="" method="POST">
         {% csrf_token %}
         <div>
-            <label for="">Phone:</label>
-            <input type="text" name="phone">
+            <label for="">New Password:</label>
+            <input type="text" name="pass1">
         </div>
         
         <div>
-            <label for="">Password:</label>
-            <input type="password" name="password">
+            <label for="">Confrim Password:</label>
+            <input type="password" name="pass2">
         </div>
         
-        <input type="submit" class="btn" value="Login">
+        <input type="submit" class="btn" value="OK">
     
     </form>
 
     {% for message in messages %}
       <p>{{message}}</p>
     {% endfor %}
-
-    <p>Don't have an account? <a href="{% url 'base:registeration' %}">Sign Up</a></p>
-    <p><a href="{% url 'base:forgotpwd' %}">Forgot Password</a></p>
     
 </div>
 

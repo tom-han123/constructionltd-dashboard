@@ -100,7 +100,6 @@
                 <label for="">Phone:</label>
                 {{form.phone_number}}
             </div>
-            
             <div>
                 <label for="">Password:</label>
                 {{form.password1}}
@@ -110,22 +109,24 @@
                 <label for="">Confrim Password:</label>
                 {{form.password2}}
             </div>
+            <input type="submit" class="btn" value="Next">
         
-        
-            <input type="submit" class="btn" value="Sign Up">
+        </form>
+
+        <form method="POST" action="">
+            {% csrf_token %}
+            <div>
+                <label for="">Verification:</label>
+                <input type="text" name="otp-code">
+            </div>
+            <input type="submit" class="btn" value="OK">
         
         </form>
     
     {{form.errors}}
     
     
-    <p>Already have account? <a href="{% url 'base:login' %}">Login</a></p>
-        
-
-   
-    
-    
-    
+        <p>Already have account? <a href="{% url 'base:login' %}">Login</a></p>
     </div>
 </div>
 
