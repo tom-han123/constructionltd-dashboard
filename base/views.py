@@ -15,10 +15,13 @@ from .forms import CreateregisterForm
 from django.views.decorators.csrf import csrf_exempt
 import json
 from .sms import send_otp_to_phone
+from datetime import datetime
 
 def dashboard(request):
     return render(request, 'base/index.html')
 
+
+expire = 120
 
 # Singin & Singup
 # @unauthenticated_user
@@ -50,25 +53,53 @@ def loginpage(request):
     context={}
     return render(request,'base/login.html')
 
+
+
+
 def forgot(request):
     if request.method == 'POST':
         phone=request.POST.get('phone')
         otp=request.POST.get('otp')
-        return redirect('base:resetpwd')
-    context = {}
+        user = User.objects.get(phone_number=phone)
+        if user:
+            if otp == user.otp:
+                t1 = user.set_otp_time
+                t2 = datetime.now().astimezone()
+                t = t2 - t1
+                if t.total_seconds() < expire:
+                    return redirect('base:resetpwd', pk=user.id)
+                    # context = {'phone':phone}
+                    # return render(request, 'base/resetpwd.html', context)
+                else:
+                    messages.info(request, "Your verification code is expire, please request otp again.")
+            else: messages.info(request, "Incorrect verification code.")
+        else: messages.info(request, "Incorrect phone number.")
+    
     return render(request, 'base/forgotpwd.html')
 
 @csrf_exempt
 def getotp(request):
-    body = request.body.decode('utf-8')
-    data = json.loads(body)
-    otp = send_otp_to_phone(data['phone'])
-    if(otp):
-        return JsonResponse({'otp':otp})
-    return 'None'
+    try:
+        body = request.body.decode('utf-8')
+        data = json.loads(body)
+        user = User.objects.get(phone_number=data['phone'])
+        otp = send_otp_to_phone(data['phone'])
+        user.otp = otp
+        user.set_otp_time = datetime.now()
+        user.save()
+        if(otp):
+            return JsonResponse({'otp':otp})
+    except Exception as e:
+        return JsonResponse({'otp':'None'})
 
-def resetpwd(request):
-    context = {}
+def resetpwd(request, pk):
+    if request.method == 'POST':
+        pass1 = request.POST.get('pass1')
+        pass2 = request.POST.get('pass2')
+        if pass1 == pass2:
+            user = User.objects.get(id=int(pk))
+            return redirect('base:dashboard')
+        messages.info(request,'The two password does not match each other.')
     return render(request, 'base/resetpwd.html')
                      
 def logoutpage(request):

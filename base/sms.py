@@ -10,9 +10,8 @@ def send_otp_to_phone(phone_number):
     try:
         otp = random.randint(100000, 999999)
         url = "https://smspoh.com/api/v2/send"
-        print(os.environ['APIKEY'])
-        # requests.post(url, headers={"Authorization":os.environ['APIKEY']}, json={"to":phone_number, "message":otp, "sender":"hello"})
-        
+        # requests.post(url, headers={"Authorization":os.environ['APIKEY']},
+        # json={"to":phone_number, "message":"Your verificatin code is "+otp, "sender":"hello"})
         return otp
     except Exception as e:
         return None

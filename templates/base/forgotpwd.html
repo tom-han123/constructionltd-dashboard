@@ -132,8 +132,13 @@
             }
             })
             .then(function(response){ 
-            return response.json()}).then(function(data){ console.log(data)})
-                    
+            return response.json()}).then(function(data){ 
+                if(data['otp'] == 'None'){
+                    window.alert("Your phone number does not exist in our system.")
+                }else{
+                    console.log(data)
+                }
+            })           
     }
     
 
